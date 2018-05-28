@@ -1,18 +1,33 @@
-def line_distance1(self, seg_a, seg_v_unit, seg_v_len, circ_pos, circ_rad):
-    pt_v = [circ_pos[0] - seg_a[0], circ_pos[1] - seg_a[1]]
-    proj = pt_v[0] * seg_v_unit[0] + pt_v[1] * seg_v_unit[1]
+from libc.math cimport sqrt
+import cython
+from cpython.array cimport array
+
+# @cython.boundscheck(False)
+# @cython.wraparound(False)
+def line_distance1(int seg_a_0, int seg_a_1, double seg_v_unit_0, double seg_v_unit_1, int seg_v_len, int circ_pos_0,
+                   int circ_pos_1, int circ_rad):
+
+    cdef int pt_v_0 = circ_pos_0 - seg_a_0
+    cdef int pt_v_1 = circ_pos_1 - seg_a_1
+
+    proj = pt_v_0 * seg_v_unit_0 + pt_v_1 * seg_v_unit_1
     if proj <= 0 or proj >= seg_v_len:
         return False
-    proj_v = [seg_v_unit[0] * proj, seg_v_unit[1] * proj]
-    closest = [int(proj_v[0] + seg_a[0]), int(proj_v[1] + seg_a[1])]
-    dist_v = [circ_pos[0] - closest[0], circ_pos[1] - closest[1]]
-    offset = sqrt(dist_v[0] ** 2 + dist_v[1] ** 2)
+    cdef double proj_v_0 = seg_v_unit_0 * proj
+    cdef double proj_v_1 = seg_v_unit_1 * proj
+
+    cdef double closest_0 = proj_v_0 + seg_a_0
+    cdef double closest_1 = proj_v_1 + seg_a_1
+
+    cdef double dist_v_0 = circ_pos_0 - closest_0
+    cdef double dist_v_1 = circ_pos_1 - closest_1
+
+    offset = sqrt(dist_v_0 ** 2 + dist_v_1 ** 2)
     if offset >= circ_rad:
         return False
-    le = sqrt(circ_rad ** 2 - int(offset) ** 2)
-    re = [closest[0] - seg_a[0], closest[1] - seg_a[1]]
-    # if sqrt(re[0] ** 2 + re[1] ** 2) - le < 0:
-    #     a = 1
-    #     print a
 
-    return sqrt(re[0] ** 2 + re[1] ** 2) - le
+    cdef double le = sqrt(circ_rad ** 2 - offset ** 2)
+    cdef double re_0 = closest_0 - seg_a_0
+    cdef double re_1 = closest_1 - seg_a_1
+
+    return sqrt(re_0 ** 2 + re_1 ** 2) - le
