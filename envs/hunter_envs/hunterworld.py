@@ -6,6 +6,7 @@ import pygame
 from numpy import random
 from math import sqrt, sin, cos
 import sys
+from hunter_utils import line_distance_fast
 
 COLOR_MAP = {"white": (255, 255, 255),
              "hunter": (0, 0, 255),
@@ -324,8 +325,9 @@ class HunterWorld(PyGameWrapper):
                                 self.draw_line(center, sin_angle, cos_angle, hunter, dis_to_wall, COLOR_MAP["grey"])
 
             for agent in other_agents:
-                dis = self.line_distance1(center, [sin_angle, -cos_angle], hunter.out_radius, list(agent.rect.center),
-                                          agent.radius)
+                dis = line_distance_fast(center[0], center[1], sin_angle, -cos_angle, hunter.out_radius,
+                                              agent.rect.center[0], agent.rect.center[1], agent.radius)
+                # dis = self.line_distance1(center, [sin_angle, -cos_angle], hunter.out_radius, agent.rect.center, agent.radius)
                 if dis is not False:
                     dis = max(dis - hunter.radius, 0)
                     assert 0 <= dis <= out_radius, str(dis)
@@ -393,7 +395,8 @@ if __name__ == "__main__":
         pygame.display.update()
         end = time.time()
         game.get_game_state()
+
         # print game.cooperative
-        # print 1 / (end - start)
+        print 1 / (end - start)
         # if v3-v0.01.getScore() > 0:
         # print "Score: {:0.3f} ".format(v3-v0.01.getScore())

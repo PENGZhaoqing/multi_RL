@@ -1,3 +1,7 @@
+import sys
+sys.path.append('../../')
+sys.path.append('../../../')
+sys.path.append('../')
 from envs.pygamewrapper import PyGameWrapper
 from agent import Agent
 from utils import *
@@ -184,6 +188,8 @@ class TrafficSim(PyGameWrapper):
                 self.maze[car.loc[1]][car.loc[0]][car.id][car.route()] = 1
                 cnt += 1
 
+
+    @profile
     def _handle_player_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -305,7 +311,8 @@ class TrafficSim(PyGameWrapper):
         return self.reward, self.info
 
     def in_observation(self, agent, other):
-        return np.abs(agent.loc[0] - other.loc[0]) <= self.vis_range[0] and np.abs(agent.loc[1] - other.loc[1]) <= self.vis_range[1]
+        return np.abs(agent.loc[0] - other.loc[0]) <= self.vis_range[0] and np.abs(agent.loc[1] - other.loc[1]) <= \
+               self.vis_range[1]
 
     # @profile
     def get_game_state(self):
@@ -369,7 +376,7 @@ if __name__ == "__main__":
     }
 
     pygame.init()
-    game = TrafficSim(width=512, height=512, agent_num=5, draw=True, prob=0.25)
+    game = TrafficSim(width=512, height=512, agent_num=15, draw=True, prob=0.25, mode='hard')
     game.screen = pygame.display.set_mode(game.get_screen_dims(), 0, 32)
     game.clock = pygame.time.Clock()
     game.rewards = rewards
@@ -379,14 +386,12 @@ if __name__ == "__main__":
 
     while True:
         start = time.time()
-        dt = game.clock.tick_busy_loop(1)
+        # dt = game.clock.tick_busy_loop(1)
         if game.game_over():
             game.init()
-        reward = game.step(dt)
+        reward = game.step(1000)
+        game.get_game_state()
         # print reward
         pygame.display.update()
         end = time.time()
-        print game.get_game_state().shape
-        # print 1 / (end - start)
-        # if v3-v0.01.getScore() > 0:
-        # print "Score: {:0.3f} ".format(v3-v0.01.getScore())
+        print 1 / (end - start)
