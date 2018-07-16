@@ -99,6 +99,7 @@ class PLE(object):
     def get_states(self):
         return self.game.get_game_state()
 
+    # @profile
     def act(self, actions):
 
         self.game.set_actions(actions)

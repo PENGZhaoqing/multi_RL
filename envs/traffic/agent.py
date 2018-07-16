@@ -30,7 +30,7 @@ class Agent(pygame.sprite.Sprite):
         self.image = pygame.Surface([self.radius, self.radius])
         # self.image.fill(color)
         self.image.set_colorkey((0, 0, 0))
-        self.image.set_alpha(int(255 * 0.50))
+        self.image.set_alpha(int(255 * 0.8))
         pygame.draw.rect(self.image, color, (0, 0, radius, radius), 0)
         self.rect = self.image.get_rect()
 

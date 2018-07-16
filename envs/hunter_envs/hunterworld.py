@@ -6,7 +6,7 @@ import pygame
 from numpy import random
 from math import sqrt, sin, cos
 import sys
-from hunter_utils import line_distance_fast
+from hunter_utils import *
 
 COLOR_MAP = {"white": (255, 255, 255),
              "hunter": (0, 0, 255),
@@ -203,7 +203,7 @@ class HunterWorld(PyGameWrapper):
         for prey in self.preys:
             hunter_pair = []
             for hunter in self.hunters:
-                if count_distant(prey, hunter) <= (hunter.range - prey.radius):
+                if count_distance_fast(prey.pos[0], prey.pos[1], hunter.pos[0], hunter.pos[1]) <= (hunter.range - prey.radius):
                     hunter_pair.append(hunter.id)
             if len(hunter_pair) >= 2:
                 for hunter_id in hunter_pair:
@@ -221,7 +221,7 @@ class HunterWorld(PyGameWrapper):
 
         for hunter in self.hunters:
             for toxin in self.toxins:
-                if count_distant(toxin, hunter) < (hunter.radius + toxin.radius):
+                if count_distance_fast(toxin.pos[0], toxin.pos[1], hunter.pos[0], hunter.pos[1]) < (hunter.radius + toxin.radius):
                     # self.lives -= 1
                     toxin.rand_orientation()
                     toxin.rand_pos()
@@ -247,6 +247,7 @@ class HunterWorld(PyGameWrapper):
 
         return self.reward, self.info
 
+    # @profile
     def get_game_state(self):
         self.observation[:] = 0
         self.info2[:] = 0
@@ -256,7 +257,7 @@ class HunterWorld(PyGameWrapper):
             for j in range(len(self.all_entities)):
                 agent = self.all_entities[j]
                 if agent is hunter: continue
-                if count_distant(agent, hunter) <= agent.radius + hunter.out_radius:
+                if count_distance_fast(agent.pos[0], agent.pos[1], hunter.pos[0], hunter.pos[1]) <= agent.radius + hunter.out_radius:
                     other_agents.append(agent)
             ob = self.observe1(hunter, other_agents)
             state = np.append(ob, [hunter.velocity[0] / self.width, hunter.velocity[1] / self.height])
@@ -264,6 +265,7 @@ class HunterWorld(PyGameWrapper):
         assert self.observation.shape == (self.MAX_HUNTER_NUM, self.EYES * (self.MAX_HUNTER_NUM + 3) + 2)
         return self.observation
 
+    # @profile
     def observe1(self, hunter, others):
         center = list(hunter.rect.center)
         out_radius = hunter.out_radius - hunter.radius
@@ -326,7 +328,7 @@ class HunterWorld(PyGameWrapper):
 
             for agent in other_agents:
                 dis = line_distance_fast(center[0], center[1], sin_angle, -cos_angle, hunter.out_radius,
-                                              agent.rect.center[0], agent.rect.center[1], agent.radius)
+                                         agent.rect.center[0], agent.rect.center[1], agent.radius)
                 # dis = self.line_distance1(center, [sin_angle, -cos_angle], hunter.out_radius, agent.rect.center, agent.radius)
                 if dis is not False:
                     dis = max(dis - hunter.radius, 0)

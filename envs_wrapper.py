@@ -25,7 +25,7 @@ class Env:
         self.id = id
         self.config = config
         if config.game_name == 'traffic':
-            self.game = TrafficSim(width=256, height=256, agent_num=config.max_agent_num, draw=False,
+            self.game = TrafficSim(width=512, height=512, agent_num=config.max_agent_num, draw=False,
                                    prob=config.prob_start,
                                    mode=config.mode)
             self.ple = PLE(self.game, fps=1, force_fps=True, display_screen=False, rng=id,

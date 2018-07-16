@@ -19,18 +19,18 @@ def main():
     parser.add_argument('--t-max', type=int, default=3)
     parser.add_argument('--learning-rate', type=float, default=0.0005)
     parser.add_argument('--steps-per-epoch', type=int, default=50000)
-    parser.add_argument('--testing', type=int, default=0)
+    parser.add_argument('--testing', type=int, default=1)
     parser.add_argument('--continue-training', type=int, default=0)
     parser.add_argument('--epoch-num', type=int, default=30)
     parser.add_argument('--start-epoch', type=int, default=20)
-    parser.add_argument('--testing-epoch', type=int, default=0)
-    parser.add_argument('--max-agent-num', type=int, default=5)
-    parser.add_argument('--method', type=str, default='DIAL')
+    parser.add_argument('--testing-epoch', type=int, default=24)
+    parser.add_argument('--max-agent-num', type=int, default=20)
+    parser.add_argument('--method', type=str, default='AMP')
     parser.add_argument('--num-layers', type=int, default=1)
-    parser.add_argument('--game-name', type=str, default='hunterworld')
-    parser.add_argument('--game-mode', type=str, default='easy')
+    parser.add_argument('--game-name', type=str, default='traffic')
+    parser.add_argument('--mode', type=str, default='hard')
     parser.add_argument('--entropy-wt', type=float, default=0.05)
-    parser.add_argument('--dynamic', type=bool, default=True)
+    parser.add_argument('--dynamic', type=bool, default=False)
     parser.add_argument('--vis', type=bool, default=False)
     parser.add_argument('--gated', type=bool, default=False)
     parser.add_argument('--use-attend', type=int, default=0)
@@ -79,12 +79,12 @@ def main():
     agents = ModelFactory.create(config)
 
     if testing:
-        envs[0].ple.force_fps = False
+        envs[0].ple.force_fps = True
         envs[0].game.draw = True
         envs[0].ple.display_screen = True
         agents.load_params(testing_epoch)
         epoch_range = range(testing_epoch, 1 + testing_epoch)
-        steps_per_epoch = 2000
+        steps_per_epoch = 5000
     else:
         assert num_envs > 1
         assert vis == False
@@ -98,6 +98,8 @@ def main():
     else:
         print_params(logging, agents.model)
 
+    import time
+    time.sleep(10)
     '''
     游戏在每个周期里执行steps_per_epoch=50000步
     '''

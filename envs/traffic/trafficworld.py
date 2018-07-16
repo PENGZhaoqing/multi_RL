@@ -119,7 +119,7 @@ class TrafficSim(PyGameWrapper):
                                  [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1],
                                  [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1],
                                  [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1], ])
-        self.maze = np.zeros(self.map.shape + (self.agent_num, 4), dtype=int)
+        self.maze = np.zeros(self.map.shape + (self.max_agent_num, 4), dtype=int)
         height, width = self.map.shape
         self.bin = self.height / float(self.map.shape[0])
 
@@ -189,7 +189,7 @@ class TrafficSim(PyGameWrapper):
                 cnt += 1
 
 
-    @profile
+    # @profile
     def _handle_player_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -286,7 +286,7 @@ class TrafficSim(PyGameWrapper):
                     # draw the agent id
                     # label = self.font.render(str(car.id) + str(car.loc), 1, white)
                     label = self.font.render(str(car.id), 1, white)
-                    self.screen.blit(label, (car.rect.center[0] - 5, car.rect.center[1] - 5))
+                    # self.screen.blit(label, (car.rect.center[0] - 5, car.rect.center[1] - 5))
 
                 # check collisions
                 for other in self.agents.sprites():
@@ -314,11 +314,12 @@ class TrafficSim(PyGameWrapper):
         return np.abs(agent.loc[0] - other.loc[0]) <= self.vis_range[0] and np.abs(agent.loc[1] - other.loc[1]) <= \
                self.vis_range[1]
 
-    # @profile
+
     def get_game_state(self):
         self.observation[:] = 0.0
         self.info2[:] = 0
         tmp = np.pad(self.maze, [(1, 1), (1, 1), (0, 0), (0, 0)], mode='constant')
+        # print tmp.shape
         for agent in self.agents.sprites():
             if not agent.out_of_maze:
                 x, y = agent.loc

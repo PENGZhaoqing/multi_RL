@@ -32,11 +32,13 @@ class Config(object):
         self.folder = None
         self.state_dim = None
         self.dir = None
+        self.epoch_num = 20
 
         self.max_agent_num = 5
         # Init game traffic
         self.prob_start = 0.05
         self.prob_end = 0.2
+        self.vis = False
 
         # Init game hunterworld
         self.toxin_num = 10
